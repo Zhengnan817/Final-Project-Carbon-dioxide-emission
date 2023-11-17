@@ -1,4 +1,4 @@
-# Final-Project-Carbon-dioxide-emission
+# Final-Project-Carbon-emission
 Our final project is about the relationship between carbon emission and GDP. 
 
 ## -[Ruoyu Chen](https://github.com/jc000222)
