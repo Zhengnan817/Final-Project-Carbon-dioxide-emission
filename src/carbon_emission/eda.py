@@ -1,10 +1,13 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-class EDAPerColumn:
+class EDAPerformer:
     """
     This class is for the single columns analysis in the EDA.
     """
+    def __init__(self,df):
+        self.df=df
+        print("The columns are:",df.columns.tolist())
 
     def bar_chart(self, column):
         """
