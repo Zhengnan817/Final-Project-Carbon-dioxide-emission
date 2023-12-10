@@ -4,6 +4,8 @@ from requests.exceptions import HTTPError
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
+import geopandas as gpd
+
 class APIReader:
     """
     A class to retrieve CO2 emissions data from the EIA API.
@@ -56,6 +58,7 @@ class APIReader:
 class DataPrep:
     def __init__(self,df):
         self.df= df
+        self.get_map()
     def delete_columns(self, columns_to_exclude,given_df=None):
         """
         Delete specified columns from the DataFrame.
@@ -69,10 +72,10 @@ class DataPrep:
         df=self.df
         if given_df is not None:
             df= given_df
-        df = df[
+        self.df = df[
             [col for col in df.columns if col not in columns_to_exclude]
         ]
-        return df
+        return self.df
     def null_check(self):
         """
         Perform null check and display missing values heatmap.
@@ -86,4 +89,44 @@ class DataPrep:
         plt.xticks(rotation=30)
         return self.df.isnull().sum().sort_values(ascending=False)
     def drop_null(self):
-        self.df = self.df.iloc[:-4]
+        self.df = self.df.dropna(subset=['GeoName'])
+    def get_map(self):
+        # Fetch the USA state boundaries GeoJSON from Natural Earth
+        url = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_1_states_provinces.geojson'
+        try:
+            response = requests.get(url)
+            if response.ok:
+                self.usa_map = gpd.read_file(response.text)
+            else:
+                print("map api fetch failed")
+                return
+        except HTTPError as e:
+            print(f"HTTP error while getting api: {e}")
+            return
+        except Exception as e:
+            print(f"An error occurred while getting api: {e}")
+            return
+
+        return self.usa_map
+    def filter_gdp(self):
+        
+        self.df = self.df[self.df['GeoName'].isin(self.usa_map['name'])]
+        self.df = self.df[self.df['Description']=='Real GDP (millions of chained 2017 dollars) 1/']
+        return self.df
+    def filter_co2(self):
+        self.df = self.df[self.df['state-name'].isin(self.usa_map['name'])]
+        self.df = self.df[self.df['fuel-name'] != 'All Fuels']
+        self.df = self.df[self.df['sector-name'] != 'Total carbon dioxide emissions from all sectors']
+        return self.df
+    def gdp_reshape(self):
+        self.df = pd.melt(self.df, id_vars=['GeoName'], var_name='Year', value_name='GDP')
+        return self.df
+    def co2_groupby_year(self):
+        grouped_df = self.df.groupby(['period', 'state-name']).agg({'value': 'sum'}).reset_index()
+        return grouped_df
+    def co2_groupby_sector(self):
+        grouped_df = self.df.groupby(['period', 'sector-name']).agg({'value': 'sum'}).reset_index()
+        return grouped_df
+    def co2_groupby_fuel(self):
+        grouped_df = self.df.groupby(['state-name', 'fuel-name']).agg({'value': 'sum'}).reset_index()
+        return grouped_df
