@@ -1,5 +1,9 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
+import geopandas as gpd
+import requests
+import matplotlib.patches as mpatches
+from requests.exceptions import HTTPError
 
 class EDAPerformer:
     """
@@ -27,8 +31,10 @@ class EDAPerformer:
         plt.xlabel(column)
         plt.ylabel("Frequency")
 
+        plt.xticks(rotation=45)  # Rotate x-axis labels
         plt.tight_layout()
         plt.show()
+
 
     def barh_chart(self, column):
         """
@@ -50,15 +56,18 @@ class EDAPerformer:
         plt.tight_layout()
         plt.show()
 
-    def hist_chart(self, column):
+    def hist_chart(self, column, filtered_df=None):
         """
         Create a histogram displaying the distribution of a numerical column using Seaborn.
 
         Args:
         - column (str): Column name in the DataFrame.
         """
+        df = filtered_df
+        if filtered_df is None:
+            df = self.df
         plt.figure(figsize=(8, 6))
-        sns.histplot(data=self.df, x=column, bins=10, kde=False)
+        sns.histplot(data=df, x=column, bins=10, kde=False)
 
         plt.title(f"Histogram of {column}")
         plt.xlabel(column)
@@ -66,6 +75,7 @@ class EDAPerformer:
 
         plt.tight_layout()
         plt.show()
+
 
     def line_chart(self, column):
         """
@@ -101,4 +111,35 @@ class EDAPerformer:
         plt.ylabel("Frequency")
 
         plt.tight_layout()
+        plt.show()
+    def GeoName_map(self,column):
+        # Fetch the USA state boundaries GeoJSON from Natural Earth
+        url = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_1_states_provinces.geojson'
+        try:
+            response = requests.get(url)
+            if response.ok:
+                usa_map = gpd.read_file(response.text)
+            else:
+                print("map api fetch failed")
+                return
+        except HTTPError as e:
+            print(f"HTTP error while getting api: {e}")
+            return
+        except Exception as e:
+            print(f"An error occurred while getting api: {e}")
+            return
+
+        usa_map = gpd.read_file(response.text)
+
+        geo_names = self.df[column].unique()
+
+        filtered_usa_map = usa_map[usa_map['name'].isin(geo_names)]
+
+        _, ax = plt.subplots(1, 1, figsize=(10, 8))
+        red_patch = mpatches.Patch(label=column)
+        usa_map.plot(color='lightgrey', edgecolor='black', ax=ax)
+        filtered_usa_map.plot( edgecolor='black', ax=ax)
+        plt.title(f'USA States in {column}')
+        plt.legend(handles=[red_patch])
+        plt.axis('off')
         plt.show()

@@ -33,7 +33,7 @@ class APIReader:
         end = end or 2022
         # The api only allows 5000 rows of data for every request
         for i in tqdm(range(start, end), desc="Fetching Data"):
-            url = f"https://api.eia.gov/v2/co2-emissions/co2-emissions-aggregates/data/?api_key={self.api_key}&start={i}&end={i}"
+            url = f"https://api.eia.gov/v2/co2-emissions/co2-emissions-aggregates/data/?api_key={self.api_key}&start={i}&end={i}&frequency=annual&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&offset=0&length=5000"
             try:
                 response = requests.get(url)
                 if response.ok:
