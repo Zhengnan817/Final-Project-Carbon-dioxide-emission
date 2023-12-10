@@ -56,7 +56,7 @@ class APIReader:
 class DataPrep:
     def __init__(self,df):
         self.df= df
-    def delete_columns(self, columns_to_exclude):
+    def delete_columns(self, columns_to_exclude,given_df=None):
         """
         Delete specified columns from the DataFrame.
 
@@ -66,10 +66,13 @@ class DataPrep:
         Returns:
         - Cleaned DataFrame after removing specified columns.
         """
-        self.df = self.df[
-            [col for col in self.df.columns if col not in columns_to_exclude]
+        df=self.df
+        if given_df is not None:
+            df= given_df
+        df = df[
+            [col for col in df.columns if col not in columns_to_exclude]
         ]
-        return self.df
+        return df
     def null_check(self):
         """
         Perform null check and display missing values heatmap.
