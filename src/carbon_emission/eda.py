@@ -150,42 +150,23 @@ class EDAPerformer:
         plt.axis('off')
         plt.show()
 
-    def bar_chart_m(self, columns):
-        """
-        Generate a bar chart based on two columns using Seaborn.
+    def line_top5gdp(self):
+        agg_gdp = self.df.groupby('GeoName')['GDP'].sum().sort_values(ascending=False)
 
-        Args:
-        - columns (list): List of two columns to be plotted.
-        """
-        plt.figure(figsize=(16, 6))
+        top_5_states = agg_gdp.head(5).index
 
-        multi_column = pd.crosstab(
-            index=self.df[columns[0]], columns=self.df[columns[1]]
-        )
-        sns.barplot(data=multi_column.reset_index(), x=columns[0], y=columns[1])
+        plt.figure(figsize=(12, 8))
 
-        plt.xticks(rotation=0)
-        plt.title(f"Freq Distribution of {columns[1]} on {columns[0]} of heroes")
-        plt.xlabel(columns[0])
-        plt.ylabel(columns[1])
+        # Filter data for top 5 states
+        top_5_data = self.df[self.df['GeoName'].isin(top_5_states)]
 
-        plt.tight_layout()
+        # Plot using Seaborn
+        sns.lineplot(data=top_5_data, x='Year', y='GDP', hue='GeoName', marker='o')
+
+        plt.title('GDP Trends for Top 5 States (2017-2022)')
+        plt.xlabel('Year')
+        plt.ylabel('GDP')
+        plt.legend(title='State', loc='upper left')
+        plt.grid(True)
         plt.show()
 
-    def scatter_plot(self, columns):
-        """
-        Generate a scatter plot based on two columns using Seaborn.
-
-        Args:
-        - columns (list): List of two columns for x and y axes.
-        """
-        plt.figure(figsize=(10, 6))
-
-        sns.scatterplot(data=self.df, x=columns[0], y=columns[1])
-
-        plt.title(f"Scatter Plot of {columns[0]} vs {columns[1]}")
-        plt.xlabel(columns[0])
-        plt.ylabel(columns[1])
-
-        plt.tight_layout()
-        plt.show()
