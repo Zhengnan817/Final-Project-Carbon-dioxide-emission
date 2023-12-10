@@ -46,7 +46,7 @@ class EDAPerformer:
         # Create the value counts
         value_counts = self.df[column].value_counts()
 
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(8, 4))
         sns.barplot(x=value_counts.values, y=value_counts.index, edgecolor="black")
 
         plt.title(f"Freq Distribution of {column} of heroes")
@@ -66,7 +66,7 @@ class EDAPerformer:
         df = filtered_df
         if filtered_df is None:
             df = self.df
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(8, 4))
         sns.histplot(data=df, x=column, bins=10, kde=False)
 
         plt.title(f"Histogram of {column}")
@@ -86,7 +86,7 @@ class EDAPerformer:
         """
         value_counts = self.df[column].value_counts().sort_index()
 
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(8, 4))
         sns.lineplot(x=value_counts.index, y=value_counts.values, marker="o")
 
         plt.title(f"Line Plot of {column}")
@@ -103,7 +103,7 @@ class EDAPerformer:
         Args:
         - column (str): Column name in the DataFrame.
         """
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(8, 4))
         sns.boxplot(data=self.df, x=column)
 
         plt.title(f"Box Plot of {column}")
@@ -134,12 +134,15 @@ class EDAPerformer:
         geo_names = self.df[column].unique()
 
         filtered_usa_map = usa_map[usa_map['name'].isin(geo_names)]
+        unmatched_usa_map = usa_map[~usa_map['name'].isin(geo_names)]
 
-        _, ax = plt.subplots(1, 1, figsize=(10, 8))
+        _, ax = plt.subplots(1, 1, figsize=(16, 8))
         red_patch = mpatches.Patch(label=column)
-        usa_map.plot(color='lightgrey', edgecolor='black', ax=ax)
-        filtered_usa_map.plot( edgecolor='black', ax=ax)
+        grey_patch = mpatches.Patch(color='lightgrey', label='Unmatched States')
+        if len(unmatched_usa_map):
+            unmatched_usa_map.plot(color='lightgrey', edgecolor='black', ax=ax)
+        filtered_usa_map.plot(edgecolor='black', ax=ax)
         plt.title(f'USA States in {column}')
-        plt.legend(handles=[red_patch])
+        plt.legend(handles=[red_patch, grey_patch])
         plt.axis('off')
         plt.show()
