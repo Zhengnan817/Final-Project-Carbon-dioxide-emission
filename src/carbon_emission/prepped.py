@@ -236,23 +236,23 @@ class State_value:
             # Filter the DataFrame for the current fuel category
             fuel_df = merged_df[merged_df["fuel-name"] == fuel_category]
 
-        # Select numeric columns for pair plotting
-        variables = ["GDP", "value"]
-        numeric_columns = [
-            col for col in variables if pd.api.types.is_numeric_dtype(fuel_df[col])
-        ]
+            # Select numeric columns for pair plotting
+            variables = ["GDP", "value"]
+            numeric_columns = [
+                col for col in variables if pd.api.types.is_numeric_dtype(fuel_df[col])
+            ]
 
-        # Generate pair plot using Seaborn
-        sns.pairplot(
-            fuel_df,
-            vars=numeric_columns,
-            hue="fuel-name",
-            height=3,
-            aspect=2,
-            diag_kind="kde",
-            plot_kws={"s": 20, "alpha": 0.6},
-            diag_kws={"fill": True},
-        )
+            # Generate pair plot using Seaborn
+            sns.pairplot(
+                fuel_df,
+                vars=numeric_columns,
+                hue="fuel-name",
+                height=3,
+                aspect=2,
+                diag_kind="kde",
+                plot_kws={"s": 20, "alpha": 0.3},
+                diag_kws={"fill": True},
+            )
 
         # Set a title for the pair plot
         plt.suptitle(f"Pairplot of Carbon Emissions, GDP, and {fuel_category}")

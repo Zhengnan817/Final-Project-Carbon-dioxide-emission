@@ -182,6 +182,7 @@ class DataPrep:
         self.df = pd.melt(
             self.df, id_vars=["GeoName"], var_name="Year", value_name="GDP"
         )
+        self.df["Year"] = self.df["Year"].astype(int)
         return self.df
 
     def co2_groupby_year(self):
@@ -216,3 +217,30 @@ class DataPrep:
             .reset_index()
         )
         return grouped_df
+
+    def co2_pivot(self):
+        pivot_df = self.co2_groupby_fuel().pivot_table(
+            index="state-name", columns="fuel-name", values="value", aggfunc="first"
+        )
+        pivot_df.reset_index(inplace=True)
+        return pivot_df
+
+    def gdp_co2(self, df_gdp):
+        grouped_df = (
+            self.df.groupby(["period", "state-name", "sector-name"])
+            .agg({"value": "sum"})
+            .reset_index()
+        )
+        df_emissions_pivot = grouped_df.pivot(
+            index=["period", "state-name"], columns="sector-name", values="value"
+        ).reset_index()
+        df_emissions_pivot.columns.name = None
+        # Left join on 'Year' and 'period'
+        merged_data = pd.merge(
+            df_emissions_pivot,
+            df_gdp,
+            how="left",
+            left_on=["state-name", "period"],
+            right_on=["GeoName", "Year"],
+        )
+        return merged_data
