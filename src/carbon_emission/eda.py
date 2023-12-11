@@ -4,7 +4,6 @@ import geopandas as gpd
 import requests
 import matplotlib.patches as mpatches
 from requests.exceptions import HTTPError
-import pandas as pd
 
 class EDAPerformer:
     """
