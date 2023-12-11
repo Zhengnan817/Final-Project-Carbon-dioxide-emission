@@ -226,15 +226,15 @@ class State_value:
         """
         # Merge the two DataFrames based on the 'state-name' and 'GeoName' columns
 
-    merged_df = pd.merge(df1, df2, left_on="state-name", right_on="GeoName")
+        merged_df = pd.merge(df1, df2, left_on="state-name", right_on="GeoName")
 
-    # Define fuel categories of interest
-    fuel_categories = ["Coal", "Natural Gas", "Petroleum"]
+        # Define fuel categories of interest
+        fuel_categories = ["Coal", "Natural Gas", "Petroleum"]
 
-    # Iterate over each fuel category to generate pair plots
-    for fuel_category in fuel_categories:
-        # Filter the DataFrame for the current fuel category
-        fuel_df = merged_df[merged_df["fuel-name"] == fuel_category]
+        # Iterate over each fuel category to generate pair plots
+        for fuel_category in fuel_categories:
+            # Filter the DataFrame for the current fuel category
+            fuel_df = merged_df[merged_df["fuel-name"] == fuel_category]
 
         # Select numeric columns for pair plotting
         variables = ["GDP", "value"]
