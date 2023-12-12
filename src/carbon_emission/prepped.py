@@ -109,6 +109,29 @@ class Prepped:
         plt.ylabel("Value")
         plt.show()
 
+    def value_time(self):
+        self.df["period"] = pd.to_datetime(self.df["period"], format="%Y")
+
+        # 按照 period 列排序
+        df = self.df.sort_values(by="period")
+
+        # 计算每年 value 的总量
+        total_value_per_year = df.groupby("period")["value"].sum().reset_index()
+
+        # 绘制折线图显示每年 value 的总量变化
+        plt.figure(figsize=(10, 6))
+        plt.plot(
+            total_value_per_year["period"],
+            total_value_per_year["value"],
+            marker="o",
+            linestyle="-",
+        )
+        plt.title("Total Value Change Over Years")
+        plt.xlabel("Year")
+        plt.ylabel("Total Value")
+        plt.grid(True)
+        plt.show()
+
     def state_value(self):
         """
         Identifies the top 10 states by total emission value and analyzes fuel type distribution within those states.
@@ -226,36 +249,25 @@ class State_value:
         """
         # Merge the two DataFrames based on the 'state-name' and 'GeoName' columns
 
+    def plot_pairplot(self, df1, df2):
+        # 合并两个数据集，使用 'state-name' 和 'GeoName' 进行连接
         merged_df = pd.merge(df1, df2, left_on="state-name", right_on="GeoName")
 
-        # Define fuel categories of interest
+        # 选择特定的燃料类别
         fuel_categories = ["Coal", "Natural Gas", "Petroleum"]
+        fuel_df = merged_df[merged_df["fuel-name"].isin(fuel_categories)]
 
-        # Iterate over each fuel category to generate pair plots
-        for fuel_category in fuel_categories:
-            # Filter the DataFrame for the current fuel category
-            fuel_df = merged_df[merged_df["fuel-name"] == fuel_category]
+        # 绘制 pairplot
+        sns.pairplot(
+            fuel_df,
+            vars=["GDP", "value"],
+            hue="fuel-name",
+            height=3,
+            aspect=2,
+            diag_kind="kde",
+            plot_kws={"s": 20, "alpha": 0.6},  # 调整点的大小和透明度
+            diag_kws={"fill": True},  # 确保 KDE 图被填充
+        )
 
-            # Select numeric columns for pair plotting
-            variables = ["GDP", "value"]
-            numeric_columns = [
-                col for col in variables if pd.api.types.is_numeric_dtype(fuel_df[col])
-            ]
-
-            # Generate pair plot using Seaborn
-            sns.pairplot(
-                fuel_df,
-                vars=numeric_columns,
-                hue="fuel-name",
-                height=3,
-                aspect=2,
-                diag_kind="kde",
-                plot_kws={"s": 20, "alpha": 0.3},
-                diag_kws={"fill": True},
-            )
-
-        # Set a title for the pair plot
-        plt.suptitle(f"Pairplot of Carbon Emissions, GDP, and {fuel_category}")
-
-        # Show the pair plot
+        plt.suptitle("Pairplot of Carbon Emissions, GDP, and Fuel Categories")
         plt.show()
