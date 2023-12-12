@@ -24,19 +24,21 @@ import requests
 import matplotlib.patches as mpatches
 from requests.exceptions import HTTPError
 
+
 class EDAPerformer:
     """
     This class is for the single columns analysis in the EDA.
     """
-    def __init__(self,df):
+
+    def __init__(self, df):
         """
         Initialize EDAPerformer class with the input DataFrame.
 
         Args:
         - df (DataFrame): Input DataFrame for analysis.
         """
-        self.df=df
-        print("The columns are:",df.columns.tolist())
+        self.df = df
+        print("The columns are:", df.columns.tolist())
 
     def bar_chart(self, column):
         """
@@ -59,7 +61,6 @@ class EDAPerformer:
         plt.xticks(rotation=45)  # Rotate x-axis labels
         plt.tight_layout()
         plt.show()
-
 
     def barh_chart(self, column):
         """
@@ -101,7 +102,6 @@ class EDAPerformer:
         plt.tight_layout()
         plt.show()
 
-
     def line_chart(self, column):
         """
         Create a line plot showing the frequency distribution of a column using Seaborn.
@@ -137,6 +137,7 @@ class EDAPerformer:
 
         plt.tight_layout()
         plt.show()
+
     def get_map(self):
         """
         Fetch the USA state boundaries GeoJSON from Natural Earth.
@@ -145,7 +146,7 @@ class EDAPerformer:
         - GeoDataFrame: GeoDataFrame containing the USA state boundaries.
         """
         # Fetch the USA state boundaries GeoJSON from Natural Earth
-        url = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_1_states_provinces.geojson'
+        url = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_1_states_provinces.geojson"
         try:
             response = requests.get(url)
             if response.ok:
@@ -162,8 +163,7 @@ class EDAPerformer:
 
         return self.usa_map
 
-        
-    def GeoName_map(self,column):
+    def GeoName_map(self, column):
         """
         Plot USA States GeoDataFrame using specified column's unique values.
 
@@ -172,18 +172,18 @@ class EDAPerformer:
         """
 
         geo_names = self.df[column].unique()
-        filtered_usa_map = self.usa_map[self.usa_map['name'].isin(geo_names)]
-        unmatched_usa_map = self.usa_map[~self.usa_map['name'].isin(geo_names)]
+        filtered_usa_map = self.usa_map[self.usa_map["name"].isin(geo_names)]
+        unmatched_usa_map = self.usa_map[~self.usa_map["name"].isin(geo_names)]
 
         _, ax = plt.subplots(1, 1, figsize=(8, 4))
         red_patch = mpatches.Patch(label=column)
-        grey_patch = mpatches.Patch(color='lightgrey', label='Unmatched States')
+        grey_patch = mpatches.Patch(color="lightgrey", label="Unmatched States")
         if len(unmatched_usa_map):
-            unmatched_usa_map.plot(color='lightgrey', edgecolor='black', ax=ax)
-        filtered_usa_map.plot(edgecolor='black', ax=ax)
-        plt.title(f'USA States in {column}')
+            unmatched_usa_map.plot(color="lightgrey", edgecolor="black", ax=ax)
+        filtered_usa_map.plot(edgecolor="black", ax=ax)
+        plt.title(f"USA States in {column}")
         plt.legend(handles=[red_patch, grey_patch])
-        plt.axis('off')
+        plt.axis("off")
         plt.show()
 
     def line_top5gdp(self):
@@ -193,22 +193,21 @@ class EDAPerformer:
         Returns:
         - DataFrame: Data filtered for the top 5 states by GDP.
         """
-        agg_gdp = self.df.groupby('GeoName')['GDP'].sum().sort_values(ascending=False)
+        agg_gdp = self.df.groupby("GeoName")["GDP"].sum().sort_values(ascending=False)
 
         top_5_states = agg_gdp.head(5).index
 
         plt.figure(figsize=(12, 8))
 
         # Filter data for top 5 states
-        top_5_data = self.df[self.df['GeoName'].isin(top_5_states)]
+        top_5_data = self.df[self.df["GeoName"].isin(top_5_states)]
 
         # Plot using Seaborn
-        sns.lineplot(data=top_5_data, x='Year', y='GDP', hue='GeoName', marker='o')
+        sns.lineplot(data=top_5_data, x="Year", y="GDP", hue="GeoName", marker="o")
 
-        plt.title('GDP Trends for Top 5 States (2017-2022)')
-        plt.xlabel('Year')
-        plt.ylabel('GDP')
-        plt.legend(title='State', loc='upper left')
+        plt.title("GDP Trends for Top 5 States (2017-2022)")
+        plt.xlabel("Year")
+        plt.ylabel("GDP")
+        plt.legend(title="State", loc="upper left")
         plt.grid(True)
         plt.show()
-

@@ -49,6 +49,7 @@ class ModelBuilder:
     - gdp_co2(): Predicts GDP based on CO2 emissions and evaluates the model.
     - scatter(): Generates scatter plots for CO2 emissions against GDP and prediction analysis.
     """
+
     def __init__(self, df):
         """
         Initializes the ModelBuilder object.
