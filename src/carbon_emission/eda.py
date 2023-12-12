@@ -1,3 +1,22 @@
+"""
+This module facilitates the retrieval of CO2 emissions data from the EIA API and provides functionality for data preparation to enable visualization. It offers two distinct classes:
+
+- APIReader: This class is designed to retrieve CO2 emissions data from the EIA API. To utilize this class, users need to obtain an API key from https://www.eia.gov/opendata/register.php and provide it during class initialization.
+- DataPrep: This class focuses on preparing and processing the data for visualization purposes.
+
+This class, EDAPerformer, facilitates various visualization methods to explore single-column analysis in a DataFrame.
+
+Dependencies:
+- seaborn
+- matplotlib.pyplot
+- geopandas
+- requests
+- matplotlib.patches
+- requests.exceptions.HTTPError
+
+The module relies on various dependencies including requests, pandas, tqdm, matplotlib.pyplot, seaborn, and geopandas to effectively manage data retrieval, processing, and visualization tasks.
+"""
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 import geopandas as gpd
@@ -10,6 +29,12 @@ class EDAPerformer:
     This class is for the single columns analysis in the EDA.
     """
     def __init__(self,df):
+        """
+        Initialize EDAPerformer class with the input DataFrame.
+
+        Args:
+        - df (DataFrame): Input DataFrame for analysis.
+        """
         self.df=df
         print("The columns are:",df.columns.tolist())
 
@@ -113,6 +138,12 @@ class EDAPerformer:
         plt.tight_layout()
         plt.show()
     def get_map(self):
+        """
+        Fetch the USA state boundaries GeoJSON from Natural Earth.
+
+        Returns:
+        - GeoDataFrame: GeoDataFrame containing the USA state boundaries.
+        """
         # Fetch the USA state boundaries GeoJSON from Natural Earth
         url = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_1_states_provinces.geojson'
         try:
@@ -133,6 +164,12 @@ class EDAPerformer:
 
         
     def GeoName_map(self,column):
+        """
+        Plot USA States GeoDataFrame using specified column's unique values.
+
+        Args:
+        - column (str): Column name in the DataFrame.
+        """
 
         geo_names = self.df[column].unique()
         filtered_usa_map = self.usa_map[self.usa_map['name'].isin(geo_names)]
@@ -150,6 +187,12 @@ class EDAPerformer:
         plt.show()
 
     def line_top5gdp(self):
+        """
+        Plot GDP trends for the top 5 states from the DataFrame.
+
+        Returns:
+        - DataFrame: Data filtered for the top 5 states by GDP.
+        """
         agg_gdp = self.df.groupby('GeoName')['GDP'].sum().sort_values(ascending=False)
 
         top_5_states = agg_gdp.head(5).index

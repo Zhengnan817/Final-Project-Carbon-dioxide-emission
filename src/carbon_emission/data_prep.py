@@ -157,6 +157,11 @@ class DataPrep:
     def filter_gdp(self):
         """
         Filter DataFrame for Real GDP data for USA states.
+
+        Returns:
+        - DataFrame: Filtered DataFrame containing Real GDP data for USA states.
+
+
         """
         self.df = self.df[self.df["GeoName"].isin(self.usa_map["name"])]
         self.df = self.df[
@@ -167,6 +172,9 @@ class DataPrep:
     def filter_co2(self):
         """
         Filter DataFrame for CO2 emissions data for USA states.
+
+        Returns:
+        - DataFrame: Filtered DataFrame containing CO2 emissions data for USA states.
         """
         self.df = self.df[self.df["state-name"].isin(self.usa_map["name"])]
         self.df = self.df[self.df["fuel-name"] != "All Fuels"]
@@ -178,6 +186,9 @@ class DataPrep:
     def gdp_reshape(self):
         """
         Reshape GDP data to long format.
+
+        Returns:
+        - DataFrame: Reshaped DataFrame of GDP data in long format.
         """
         self.df = pd.melt(
             self.df, id_vars=["GeoName"], var_name="Year", value_name="GDP"
@@ -188,6 +199,9 @@ class DataPrep:
     def co2_groupby_year(self):
         """
         Group CO2 emissions data by year and state.
+
+        Returns:
+        - DataFrame: Grouped DataFrame of CO2 emissions data by year and state.
         """
         grouped_df = (
             self.df.groupby(["period", "state-name"])
@@ -199,6 +213,9 @@ class DataPrep:
     def co2_groupby_sector(self):
         """
         Group CO2 emissions data by year and sector.
+
+         Returns:
+        - DataFrame: Grouped DataFrame of CO2 emissions data by year and sector.
         """
         grouped_df = (
             self.df.groupby(["period", "sector-name"])
@@ -210,6 +227,9 @@ class DataPrep:
     def co2_groupby_fuel(self):
         """
         Group CO2 emissions data by state and fuel type.
+
+        Returns:
+        - DataFrame: Grouped DataFrame of CO2 emissions data by state and fuel type.
         """
         grouped_df = (
             self.df.groupby(["state-name", "fuel-name"])
@@ -219,6 +239,12 @@ class DataPrep:
         return grouped_df
 
     def co2_pivot(self):
+        """
+        Pivot CO2 emissions data.
+
+        Returns:
+        - DataFrame: Pivoted DataFrame of CO2 emissions data.
+        """
         pivot_df = self.co2_groupby_fuel().pivot_table(
             index="state-name", columns="fuel-name", values="value", aggfunc="first"
         )
@@ -226,6 +252,15 @@ class DataPrep:
         return pivot_df
 
     def gdp_co2(self, df_gdp):
+        """
+        Merge GDP and CO2 emissions data.
+
+        Args:
+        - df_gdp (DataFrame): DataFrame containing GDP data.
+
+        Returns:
+        - DataFrame: Merged DataFrame of GDP and CO2 emissions data.
+        """
         grouped_df = (
             self.df.groupby(["period", "state-name", "sector-name"])
             .agg({"value": "sum"})

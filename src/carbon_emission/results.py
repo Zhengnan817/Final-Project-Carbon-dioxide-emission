@@ -1,3 +1,25 @@
+"""
+Module for building models and performing analysis on CO2 emissions and GDP data.
+
+This module utilizes various libraries such as sklearn, geopandas, matplotlib, requests, and pandas
+to cluster states based on fuel emissions, visualize the state clusters on a map, predict GDP based on CO2 emissions,
+and generate scatter plots for detailed analysis.
+
+Class ModelBuilder encapsulates these functionalities:
+- state_fuel_cluster() method for clustering states based on fuel emissions.
+- map_fuel() method to visualize state clusters on a map.
+- gdp_co2() method to predict GDP based on CO2 emissions and evaluate the model.
+- scatter() method to generate scatter plots for in-depth analysis.
+
+Dependencies:
+- sklearn
+- geopandas
+- matplotlib
+- requests
+- pandas
+
+"""
+
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import StandardScaler
 import geopandas as gpd
@@ -11,10 +33,38 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 class ModelBuilder:
+    """
+    A class for building models and performing analysis on CO2 emissions and GDP data.
+
+    This class includes methods for clustering states based on fuel emissions, visualizing state clusters on a map,
+    predicting GDP based on CO2 emissions, and generating scatter plots for analysis.
+
+    Attributes:
+    - df (pd.DataFrame): The input DataFrame containing CO2 emissions and GDP data.
+    - df_cluster (pd.DataFrame): DataFrame after clustering states based on fuel emissions.
+
+    Methods:
+    - state_fuel_cluster(): Clusters states based on fuel emissions.
+    - map_fuel(): Visualizes the state clusters on a map.
+    - gdp_co2(): Predicts GDP based on CO2 emissions and evaluates the model.
+    - scatter(): Generates scatter plots for CO2 emissions against GDP and prediction analysis.
+    """
     def __init__(self, df):
+        """
+        Initializes the ModelBuilder object.
+
+        Args:
+            - df (pd.DataFrame): The input DataFrame containing data.
+        """
         self.df = df
 
     def state_fuel_cluster(self):
+        """
+        Performs clustering on the state-fuel data.
+
+        Returns:
+        - pd.DataFrame: DataFrame with clusters added as a new column.
+        """
         df = self.df
         data = df.iloc[:, 2:]
 
@@ -32,6 +82,12 @@ class ModelBuilder:
         return df
 
     def map_fuel(self):
+        """
+        Generates a map visualization showcasing the clusters of USA states.
+
+        Returns:
+        None (visualizes the map)
+        """
         url = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_1_states_provinces.geojson"
         response = requests.get(url)
         us_states = gpd.read_file(response.text)
@@ -51,6 +107,14 @@ class ModelBuilder:
         plt.show()
 
     def gdp_co2(self):
+        """
+        Builds and evaluates a Linear Regression model for GDP prediction based on CO2 emissions.
+
+        Prints:
+        - Mean Squared Error (MSE) with normalized features.
+        - R-squared score with normalized features.
+        - Coefficients of the model.
+        """
         features = [
             "Commercial carbon dioxide emissions",
             "Electric Power carbon dioxide emissions",
@@ -89,6 +153,12 @@ class ModelBuilder:
         print(coefficients)
 
     def scatter(self):
+        """
+        Creates a scatter plot to visualize the relationships between CO2 emissions and GDP.
+
+        Returns:
+        None (visualizes scatter plots)
+        """
         features = [
             "Commercial carbon dioxide emissions",
             "Electric Power carbon dioxide emissions",

@@ -9,6 +9,11 @@ Available methods include:
 * `sec_name_by_time`: Visualizes the distribution of values by sector and period using a grouped bar chart.
 * `state_value`: Identifies the top 10 states by total emission value and analyzes fuel type distribution within those states.
 * `fuel_sector_percen`: Displays the percentage of emissions contributed by each fuel type within each sector using a stacked bar chart.
+
+Dependencies:
+- seaborn
+- matplotlib
+- pandas
 """
 import seaborn as sns
 import matplotlib.pyplot as plt
