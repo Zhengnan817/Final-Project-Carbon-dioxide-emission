@@ -187,8 +187,10 @@ class ModelBuilder:
         plt.tight_layout()
         plt.show()
 
+
 class Covid_Research:
     """A class for conducting research on COVID-19 data."""
+
     def __init__(self, df):
         self.df = df
 
