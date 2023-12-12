@@ -175,7 +175,7 @@ class EDAPerformer:
         filtered_usa_map = self.usa_map[self.usa_map['name'].isin(geo_names)]
         unmatched_usa_map = self.usa_map[~self.usa_map['name'].isin(geo_names)]
 
-        _, ax = plt.subplots(1, 1, figsize=(16, 8))
+        _, ax = plt.subplots(1, 1, figsize=(8, 4))
         red_patch = mpatches.Patch(label=column)
         grey_patch = mpatches.Patch(color='lightgrey', label='Unmatched States')
         if len(unmatched_usa_map):

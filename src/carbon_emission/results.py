@@ -145,10 +145,8 @@ class ModelBuilder:
         self.y_test = y_test
         coefficients = pd.Series(model.coef_, index=features)
 
-        mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
 
-        print(f"Mean Squared Error with Normalized Features: {mse}")
         print(f"R-squared Score with Normalized Features: {r2}")
         print(coefficients)
 
