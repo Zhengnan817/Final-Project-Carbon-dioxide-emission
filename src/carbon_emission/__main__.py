@@ -23,6 +23,7 @@ from carbon_emission.eda import EDAPerformer
 from carbon_emission.prepped import Prepped
 from carbon_emission.prepped import State_value
 from carbon_emission.results import ModelBuilder
+from carbon_emission.results import Covid_Research
 
 
 def main():
@@ -108,6 +109,9 @@ def main():
     model_gdp_co2 = ModelBuilder(df_co2_gdp)
     model_gdp_co2.gdp_co2()
     model_gdp_co2.scatter()
+
+    covid = Covid_Research(df_co2_gdp)
+    covid.covid_trend()
 
 
 main()

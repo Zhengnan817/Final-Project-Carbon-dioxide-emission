@@ -115,15 +115,23 @@ class Prepped:
         plt.show()
 
     def value_time(self):
+        """
+        Process the 'period' column as datetime, sort the DataFrame by 'period',
+        calculate the total value per year, and visualize the change over years.
+
+        Returns:
+        None
+
+        Example:
+        obj = YourClass()
+        obj.value_time()
+        """
         self.df["period"] = pd.to_datetime(self.df["period"], format="%Y")
 
-        # 按照 period 列排序
         df = self.df.sort_values(by="period")
 
-        # 计算每年 value 的总量
         total_value_per_year = df.groupby("period")["value"].sum().reset_index()
 
-        # 绘制折线图显示每年 value 的总量变化
         plt.figure(figsize=(10, 6))
         plt.plot(
             total_value_per_year["period"],
@@ -255,14 +263,35 @@ class State_value:
         # Merge the two DataFrames based on the 'state-name' and 'GeoName' columns
 
     def plot_pairplot(self, df1, df2):
-        # 合并两个数据集，使用 'state-name' 和 'GeoName' 进行连接
+        """
+        Generate a pairplot visualizing the relationship between GDP and carbon emissions for specific fuel categories.
+
+        Parameters:
+        - df1 (pd.DataFrame): The first DataFrame containing data for state names.
+        - df2 (pd.DataFrame): The second DataFrame containing data for GeoNames.
+
+        Returns:
+        None
+
+        This function merges two DataFrames on 'state-name' and 'GeoName' and plots a pairplot for specific fuel categories
+        (Coal, Natural Gas, Petroleum) with respect to GDP and carbon emissions.
+
+        Pairplot axes:
+        - x-axis: GDP
+        - y-axis: Carbon emissions ('value')
+        - Hue: Fuel categories
+
+        Additional styling options:
+        - Diagonal subplots are kernel density estimates (KDE).
+        - Points in scatter plots have adjusted size and transparency.
+
+        The resulting pairplot is displayed with an overall title.
+        """
         merged_df = pd.merge(df1, df2, left_on="state-name", right_on="GeoName")
 
-        # 选择特定的燃料类别
         fuel_categories = ["Coal", "Natural Gas", "Petroleum"]
         fuel_df = merged_df[merged_df["fuel-name"].isin(fuel_categories)]
 
-        # 绘制 pairplot
         sns.pairplot(
             fuel_df,
             vars=["GDP", "value"],
@@ -270,8 +299,8 @@ class State_value:
             height=3,
             aspect=2,
             diag_kind="kde",
-            plot_kws={"s": 20, "alpha": 0.6},  # 调整点的大小和透明度
-            diag_kws={"fill": True},  # 确保 KDE 图被填充
+            plot_kws={"s": 20, "alpha": 0.6},
+            diag_kws={"fill": True},
         )
 
         plt.suptitle("Pairplot of Carbon Emissions, GDP, and Fuel Categories")
