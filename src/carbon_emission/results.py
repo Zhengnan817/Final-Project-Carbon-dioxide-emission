@@ -49,6 +49,7 @@ class ModelBuilder:
     - gdp_co2(): Predicts GDP based on CO2 emissions and evaluates the model.
     - scatter(): Generates scatter plots for CO2 emissions against GDP and prediction analysis.
     """
+
     def __init__(self, df):
         """
         Initializes the ModelBuilder object.
@@ -145,10 +146,8 @@ class ModelBuilder:
         self.y_test = y_test
         coefficients = pd.Series(model.coef_, index=features)
 
-        mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
 
-        print(f"Mean Squared Error with Normalized Features: {mse}")
         print(f"R-squared Score with Normalized Features: {r2}")
         print(coefficients)
 
