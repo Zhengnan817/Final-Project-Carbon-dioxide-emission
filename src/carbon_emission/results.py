@@ -11,13 +11,16 @@ Class ModelBuilder encapsulates these functionalities:
 - gdp_co2() method to predict GDP based on CO2 emissions and evaluate the model.
 - scatter() method to generate scatter plots for in-depth analysis.
 
+Class ModelBuilder encapsulates these functionalities:
+- covid_trend() Visualizes the GDP and Total Value trend by year and sector.
+
 Dependencies:
 - sklearn
 - geopandas
 - matplotlib
 - requests
 - pandas
-
+- seaborn
 """
 
 from sklearn.cluster import AgglomerativeClustering
@@ -182,4 +185,92 @@ class ModelBuilder:
 
         # Adjust layout
         plt.tight_layout()
+        plt.show()
+
+class Covid_Research:
+    """A class for conducting research on COVID-19 data."""
+    def __init__(self, df):
+        self.df = df
+
+    def covid_trend(self):
+        """
+        Visualizes the GDP and Total Value trend by year and sector.
+
+        Parameters:
+        - df1 (pd.DataFrame): DataFrame containing COVID-19 data.
+        - df2 (pd.DataFrame): DataFrame containing GDP data.
+        """
+        grouped_data = (
+            self.df.groupby("Year")
+            .agg(
+                {
+                    "GDP": "sum",
+                    "Commercial carbon dioxide emissions": "sum",
+                    "Electric Power carbon dioxide emissions": "sum",
+                    "Industrial carbon dioxide emissions": "sum",
+                    "Residential carbon dioxide emissions": "sum",
+                    "Transportation carbon dioxide emissions": "sum",
+                }
+            )
+            .reset_index()
+        )
+
+        # Create a figure with two subplots
+        fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, figsize=(12, 8))
+
+        # Plot GDP on the first subplot
+        ax1.plot(
+            grouped_data["Year"],
+            grouped_data["GDP"],
+            label="GDP",
+            marker="o",
+            color="blue",
+        )
+        ax1.set_ylabel("GDP")
+        ax1.set_title("GDP and Total Emissions by Sector Over Years")
+
+        # Plot emissions from each fuel type on the second subplot
+        ax2.plot(
+            grouped_data["Year"],
+            grouped_data["Commercial carbon dioxide emissions"],
+            label="Commercial",
+            marker="o",
+            color="orange",
+        )
+        ax2.plot(
+            grouped_data["Year"],
+            grouped_data["Electric Power carbon dioxide emissions"],
+            label="Electric Power",
+            marker="o",
+            color="green",
+        )
+        ax2.plot(
+            grouped_data["Year"],
+            grouped_data["Industrial carbon dioxide emissions"],
+            label="Industrial",
+            marker="o",
+            color="red",
+        )
+        ax2.plot(
+            grouped_data["Year"],
+            grouped_data["Residential carbon dioxide emissions"],
+            label="Residential",
+            marker="o",
+            color="purple",
+        )
+        ax2.plot(
+            grouped_data["Year"],
+            grouped_data["Transportation carbon dioxide emissions"],
+            label="Transportation",
+            marker="o",
+            color="brown",
+        )
+        ax2.set_xlabel("Year")
+        ax2.set_ylabel("Total Emissions")
+
+        # Add legend to both subplots
+        ax1.legend()
+        ax2.legend()
+
+        # Display the plots
         plt.show()
