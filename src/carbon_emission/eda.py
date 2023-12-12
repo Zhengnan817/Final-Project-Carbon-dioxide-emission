@@ -4,6 +4,16 @@ This module facilitates the retrieval of CO2 emissions data from the EIA API and
 - APIReader: This class is designed to retrieve CO2 emissions data from the EIA API. To utilize this class, users need to obtain an API key from https://www.eia.gov/opendata/register.php and provide it during class initialization.
 - DataPrep: This class focuses on preparing and processing the data for visualization purposes.
 
+This class, EDAPerformer, facilitates various visualization methods to explore single-column analysis in a DataFrame.
+
+Dependencies:
+- seaborn
+- matplotlib.pyplot
+- geopandas
+- requests
+- matplotlib.patches
+- requests.exceptions.HTTPError
+
 The module relies on various dependencies including requests, pandas, tqdm, matplotlib.pyplot, seaborn, and geopandas to effectively manage data retrieval, processing, and visualization tasks.
 """
 
